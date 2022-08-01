@@ -1,0 +1,19 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+    <l:layout> 
+        <l:side-panel> 
+            <st:include page="sidepanel.jelly" it="${it.jenkins}" optional="true" /> 
+        </l:side-panel>
+        <l:main-panel> 
+            <h1> 
+                ${it.displayName} 
+            </h1>
+
+            <j:forEach var="lib" items="${it.libraries}" indexVar="i">
+                <p>
+                    ${lib.name}
+                </p>
+            </j:forEach>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>
