@@ -7,10 +7,13 @@ import org.jenkinsci.plugins.workflow.libs.LibraryConfiguration;
 
 import hudson.Extension;
 import hudson.model.RootAction;
+import io.jenkins.plugins.pages.TestPage;
 import jenkins.model.Jenkins;
 
 @Extension
 public class ScriptRootAction implements RootAction {
+
+    public TestPage testPage = new TestPage(getDisplayName());
 
     @Override
     public String getDisplayName() {

@@ -9,6 +9,8 @@
                 ${it.displayName} 
             </h1>
 
+            <st:include page="test.jelly" it="${it.testPage}" optional="true" />
+
             <j:forEach var="lib" items="${it.libraries}" indexVar="i">
                 <p>
                     ${lib.name}
