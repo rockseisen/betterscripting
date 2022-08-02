@@ -1,8 +1,8 @@
 package io.jenkins.plugins;
 
 import hudson.Plugin;
-import jenkins.model.Jenkins;
 
+@SuppressWarnings("deprecation")
 public class PluginImpl extends Plugin {
 
     @Override
