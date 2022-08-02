@@ -5,11 +5,27 @@
             <st:include page="sidepanel.jelly" it="${it.jenkins}" optional="true" /> 
         </l:side-panel>
         <l:main-panel> 
-            <h1> 
-                ${it.displayName} 
-            </h1>
+            <!-- In here is a tab view for the pages -->
 
-            <st:include page="test.jelly" it="${it.testPage}" optional="true" />
+            <j:set var="resourceURL" value="${rootURL}/plugin/betterscripting/ScriptRootAction" />
+
+            <script src="${resourceURL}/tabs.js" />
+
+            <header>
+                <button onclick="showTab(${it.codeTabId})">Code</button>
+                <button onclick="showTab(${it.configurationTabId})">Configure</button>
+            </header>
+
+            <div id="tabs" class="tab-container">
+                <div id="${it.codeTabId}" class="tab" style="display:block;">
+                    <st:include page="code.jelly" optional="true" />
+                </div>
+                <div id="${it.configurationTabId}" class="tab" style="display:none;">
+                    <st:include page="configuration.jelly" optional="true" />
+                </div>
+            </div>
+
+            
 
             <j:forEach var="lib" items="${it.libraries}" indexVar="i">
                 <p>
