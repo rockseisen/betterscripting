@@ -24,14 +24,6 @@
                     <st:include page="configuration.jelly" optional="true" />
                 </div>
             </div>
-
-            
-
-            <j:forEach var="lib" items="${it.libraries}" indexVar="i">
-                <p>
-                    ${lib.name}
-                </p>
-            </j:forEach>
         </l:main-panel>
     </l:layout>
 </j:jelly>

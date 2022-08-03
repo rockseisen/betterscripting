@@ -1,10 +1,15 @@
 package io.jenkins.plugins.config;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import hudson.Extension;
+import hudson.ExtensionList;
 import jenkins.model.GlobalConfiguration;
 
+@Extension
 public class ScriptsConfig extends GlobalConfiguration {
     
     private ArrayList<ScriptElement> scriptsList = new ArrayList<>();
@@ -14,21 +19,25 @@ public class ScriptsConfig extends GlobalConfiguration {
         load();
     }
 
-    public void saveScript(String name, String script) {
-        if(getElementByName(name).equals(null)) {
+    public static ScriptsConfig get() {
+        return ExtensionList.lookupSingleton(ScriptsConfig.class);
+    }
+
+    public void saveScript(String name, String script) throws IOException {
+        if(getElementByName(name) == null) {
             scriptsList.add(
                 new ScriptElement(
                     name,
-                    makeFileString(name),
                     new ArrayList<>()
                 )
             );
         }
+        PrintWriter writer = new PrintWriter(getElementByName(name).getFile());
+        writer.write(script);
+        writer.close();
     }
 
-    private String makeFileString(String name) {
-        return scriptsFolder + File.separator + name + File.separator + name + ".groovy";
-    }
+    
 
     private ScriptElement getElementByName(String name) {
         for(ScriptElement e : scriptsList) {
@@ -40,20 +49,41 @@ public class ScriptsConfig extends GlobalConfiguration {
         return null;
     }
 
+    public String getScriptLocation(String name) {
+        return getElementByName(name).getScriptInFolder();
+    }
+
+    public String getScriptFolderUrl() {
+        return scriptsFolder;
+    }
+
 
     class ScriptElement {
         public String name;
-        public String fileString;
         public ArrayList<String> libraries;
 
         public ScriptElement(
             String name,
-            String fileString,
             ArrayList<String> libraries
-        ) {
+        ) throws IOException {
             this.name = name;
-            this.fileString = fileString;
             this.libraries = libraries;
+            
+            File file = new File(scriptsFolder + File.separator + name + File.separator + name + ".groovy");
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+
+        public File getFile() {
+            return new File(makeFileString());
+        }
+
+        public String makeFileString() {
+            return scriptsFolder + File.separator + getScriptInFolder();
+        }
+
+        public String getScriptInFolder() {
+            return name + File.separator + name + ".groovy";
         }
     }
 
