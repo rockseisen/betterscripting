@@ -1,15 +1,10 @@
 package io.jenkins.plugins.action;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URLConnection;
 import java.util.List;
 
-import org.codehaus.groovy.bsf.GroovyEngine;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.jenkinsci.plugins.workflow.libs.GlobalLibraries;
 import org.jenkinsci.plugins.workflow.libs.LibraryConfiguration;
@@ -17,7 +12,6 @@ import org.jenkinsci.plugins.workflow.libs.LibraryConfiguration;
 import groovy.lang.Binding;
 import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
-import groovy.util.ResourceConnector;
 import groovy.util.ResourceException;
 import groovy.util.ScriptException;
 import hudson.Extension;
