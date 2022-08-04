@@ -9,4 +9,14 @@
     Code page
 </p>
 
+<h1>
+    Result
+</h1>
+
+<j:forEach items="${it.runScript(&quot;println 'hello world';def hello = 'Hallo Welt';&quot;)}" var="line">
+    <p style="margin:0;padding:0;">
+        ${line}
+    </p>
+</j:forEach>
+
 </j:jelly>

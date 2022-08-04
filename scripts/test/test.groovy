@@ -1,0 +1,1 @@
+println 'hello world';\ndef hello = 'Hallo Welt';
