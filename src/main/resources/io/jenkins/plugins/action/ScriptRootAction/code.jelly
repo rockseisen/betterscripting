@@ -1,19 +1,34 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
-    
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+
 <h1>
     ${it.displayName}
 </h1>
 
-<p>
-    Code page
-</p>
+<st:adjunct includes="org.kohsuke.stapler.codemirror.lib.codemirror" />
+<st:adjunct includes="org.kohsuke.stapler.codemirror.theme.default" />
+<st:adjunct includes="org.kohsuke.stapler.codemirror.mode.groovy.groovy" />
+
+<!-- 
+<form>
+    <f:textarea id="code-editor" codemirror-mode="groovy"></f:textarea>
+    <f:submit value="Run"></f:submit>
+</form>
+-->
+
+<div style="border:1px solid black;">
+    <textarea id="code-editor"></textarea>
+</div>
+
+<button class="editor-button" onclick="onRunButtonClick()">Run</button>
+<button class="editor-button" onclick="onRunSaveClick()">Save</button>
+
 
 <h1>
     Result
 </h1>
 
-<j:forEach items="${it.runScript(&quot;println 'hello world';def hello = 'Hallo Welt';&quot;)}" var="line">
+<j:forEach items="${it.runScript()}" var="line">
     <p style="margin:0;padding:0;">
         ${line}
     </p>

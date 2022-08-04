@@ -8,6 +8,7 @@
             <!-- In here is a tab view for the pages -->
 
             <j:set var="resourceURL" value="${rootURL}/plugin/betterscripting/ScriptRootAction" />
+            <link rel="stylesheet" href="${resourceURL}/styles.css" />
 
             <script src="${resourceURL}/tabs.js" />
 
@@ -24,6 +25,9 @@
                     <st:include page="configuration.jelly" optional="true" />
                 </div>
             </div>
+
+            <script src="${resourceURL}/scriptsManagement.js" />
+
         </l:main-panel>
     </l:layout>
 </j:jelly>
