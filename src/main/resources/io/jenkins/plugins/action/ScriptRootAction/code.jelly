@@ -20,18 +20,53 @@
     <textarea id="code-editor"></textarea>
 </div>
 
-<button class="editor-button" onclick="onRunButtonClick()">Run</button>
-<button class="editor-button" onclick="onRunSaveClick()">Save</button>
+<div id="saved" ></div>
 
+<button class="editor-button" onclick="onRunButtonClick()">Run</button>
+<button class="editor-button" onclick="onSaveButtonClick()">Save</button>
 
 <h1>
     Result
 </h1>
 
-<j:forEach items="${it.runScript()}" var="line">
-    <p style="margin:0;padding:0;">
-        ${line}
-    </p>
-</j:forEach>
+<div id="resultDisplay">
+
+</div>
+
+<script>
+    var it = <st:bind value="${it}" />;
+
+    var editor = CodeMirror.fromTextArea(document.getElementById('code-editor'),{
+        lineNumbers: true,
+        mode: 'groovy'
+    });
+
+    // Prepare components
+    editor.setValue(`${it.scriptText}`);
+    runScript();
+
+    function onRunButtonClick() {
+        saveScript();
+        runScript();
+    }
+
+    function onSaveButtonClick() {
+        saveScript();
+    }
+
+    function saveScript() {
+        it.saveScript(editor.getValue(), (res) => {
+            
+        })
+    }
+
+    function runScript() {
+        document.getElementById('resultDisplay').innerHTML = 'Running script';
+        it.runScript((res) => {
+            document.getElementById('resultDisplay').innerHTML = res.responseObject();
+        })
+    }
+
+</script>
 
 </j:jelly>

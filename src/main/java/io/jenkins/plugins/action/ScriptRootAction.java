@@ -1,6 +1,5 @@
 package io.jenkins.plugins.action;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -8,8 +7,10 @@ import java.util.List;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.jenkinsci.plugins.workflow.libs.GlobalLibraries;
 import org.jenkinsci.plugins.workflow.libs.LibraryConfiguration;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;
@@ -31,12 +32,7 @@ public class ScriptRootAction implements RootAction {
     private String activeScript = "test";
 
     public ScriptRootAction() {
-        System.out.println("Creating action");
-        try {
-            ScriptsConfig.get().saveScript("test", "println 'hello world___'");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        
     }
 
     @Override
@@ -75,39 +71,66 @@ public class ScriptRootAction implements RootAction {
         }*/
     }
 
-    public String getActiveScript() {
+    @JavaScriptMethod
+    public String getScriptText() {
         return ScriptsConfig.get().getScriptSaveByName(activeScript).getText();
     }
 
-    public void saveScript(String text) throws IOException {
-        ScriptsConfig.get().saveScript(activeScript, text);
+    @JavaScriptMethod
+    public boolean saveScript(String text) {
+        try {
+            ScriptsConfig.get().saveScript(activeScript, text);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public String[] runScript() throws IOException {
+    @JavaScriptMethod
+    public String runScript() {
         ScriptSave scriptSave = ScriptsConfig.get().getScriptSaveByName(activeScript);
 
-        GroovyScriptEngine engine = new GroovyScriptEngine(scriptSave.getFolderPath(), this.getClass().getClassLoader());
+        if(scriptSave == null) {
+            return "No existing script was chosen";
+        }
+
+        GroovyScriptEngine engine;
+        try {
+            engine = new GroovyScriptEngine(scriptSave.getFolderPath(), this.getClass().getClassLoader());
+        } catch (IOException e1) {
+            return 
+                new String("Error while creating groovy engine:\n" + e1.getLocalizedMessage())
+                    .replace("\n", "<br/>");
+        }
         CompilerConfiguration scriptConfig = new CompilerConfiguration();
+        scriptConfig.addCompilationCustomizers(new ImportCustomizer().addStarImports(
+            "jenkins",
+            "jenkins.model",
+            "hudson",
+            "hudson.model"
+        ));
 
         StringWriter out = new StringWriter();
         PrintWriter writer = new PrintWriter(out);
         engine.setConfig(scriptConfig);
 
         try {
-            Script script = engine.createScript(scriptSave.getFileName(), new Binding());
+            Binding binding = new Binding();
+            Script script = engine.createScript(scriptSave.getFileName(), binding);
             script.setProperty("out", writer);
             Object res = script.run();
             writer.println("");
             if(res != null) {
                 writer.println("Result: " + res.toString());
             }
-        } catch (ResourceException | ScriptException | CompilationFailedException e) {
-            System.out.println("Error while running script");
-            e.printStackTrace();
-            writer.println(e.getMessage());
+        } catch (Exception e) {
+            writer.println(e.getLocalizedMessage());
         }
 
-        return out.toString().split("\n");
+        
+
+        return out.toString().replace("\n", "<br/>");
     }
     
 }

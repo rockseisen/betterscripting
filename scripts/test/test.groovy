@@ -1,8 +1,7 @@
-import org.test.Test;
+println 'This';
 
-def test = new Test('yos');
+println 'is'; 
 
-println test.getTest();
+println 'just a test';
 
-
-println 'hello world___'
+def halo = 'test';
